@@ -177,7 +177,7 @@ fn right_more_message(
 }
 
 fn tab_line_prefix(session_name: Option<&str>, palette: Styling, cols: usize) -> Vec<LinePart> {
-    let prefix_text = " Zellij ".to_string();
+    let prefix_text = "".to_string();
 
     let prefix_text_len = prefix_text.chars().count();
     let text_color = palette.text_unselected.base;
@@ -189,7 +189,7 @@ fn tab_line_prefix(session_name: Option<&str>, palette: Styling, cols: usize) ->
         tab_index: None,
     }];
     if let Some(name) = session_name {
-        let name_part = format!("({}) ", name);
+        let name_part = format!(" {} |", name);
         let name_part_len = name_part.width();
         let text_color = palette.text_unselected.base;
         let name_part_styled_text = style!(text_color, bg_color).bold().paint(name_part);
