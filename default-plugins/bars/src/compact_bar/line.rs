@@ -6,7 +6,7 @@ use zellij_tile::graphemes::display_width;
 use zellij_tile::prelude::*;
 use zellij_tile_utils::style;
 
-pub(crate) const PREFIX_TEXT: &str = " Zellij ";
+pub(crate) const PREFIX_TEXT: &str = "";
 
 pub struct TabLineOutput {
     pub parts: Vec<LinePart>,
@@ -487,7 +487,7 @@ impl<'a> TabLinePrefixBuilder<'a> {
     }
 
     fn create_session_name_part(&self, name: &str, used_len: usize) -> Option<LinePart> {
-        let name_part = format!("({})", name);
+        let name_part = format!(" {} |", name);
         let name_part_len = display_width(&name_part);
 
         if self.cols.saturating_sub(used_len) >= name_part_len {

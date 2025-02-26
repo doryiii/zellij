@@ -978,7 +978,7 @@ mod tests {
             .iter()
             .map(|part| strip_ansi(&part.part))
             .collect();
-        assert!(joined.contains("+3"));
+        assert!(joined.contains("+2"));
         let prefix_width = zellij_tile::graphemes::display_width(PREFIX_TEXT);
         let tab_width = 8;
         assert!(composed.regions.contains(&(
@@ -992,11 +992,11 @@ mod tests {
             TabBarRegion::Tab(1)
         )));
         assert!(composed.regions.iter().any(|(start, _, region)| *start
-            == prefix_width + 3 * tab_width
+            == prefix_width + 4 * tab_width
             && *region
                 == TabBarRegion::Marker {
                     left: false,
-                    position: 3
+                    position: 4
                 }));
     }
 

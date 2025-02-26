@@ -7,7 +7,7 @@ use zellij_tile::graphemes::display_width;
 use zellij_tile::prelude::*;
 use zellij_tile_utils::style;
 
-pub(crate) const PREFIX_TEXT: &str = " Zellij ";
+pub(crate) const PREFIX_TEXT: &str = "";
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct TabLineHover {
@@ -269,7 +269,7 @@ fn tab_line_prefix(
         return (parts, breadcrumb_range);
     }
     if let Some(name) = session_name {
-        let name_part = format!("({}) ", name);
+        let name_part = format!(" {} |", name);
         let name_part_len = display_width(&name_part);
         let name_part_styled_text = prefix_style.paint(name_part);
         if cols.saturating_sub(running_text_len) >= name_part_len {
