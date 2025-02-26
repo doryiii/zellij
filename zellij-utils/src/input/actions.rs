@@ -171,6 +171,8 @@ pub enum Action {
     WriteChars {
         chars: String,
     },
+    /// Write content of given file to the terminal.
+    WriteCommandOutput(String),
     /// Write to a specific pane by ID.
     WriteToPaneId {
         bytes: Vec<u8>,
@@ -970,6 +972,9 @@ impl Action {
                         }
                 },
                 None => Ok(vec![Action::WriteChars { chars }]),
+            },
+            CliAction::WriteCommandOutput { filename } => {
+                Ok(vec![Action::WriteCommandOutput(filename)])
             },
             CliAction::Paste { chars, pane_id } => match pane_id {
                 Some(pane_id_str) => {

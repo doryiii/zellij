@@ -1554,6 +1554,7 @@ impl From<crate::input::actions::Action>
             WriteAction,
             WriteCharsAction,
             WriteCharsToPaneIdAction,
+            WriteCommandOutputAction,
             WriteKeyToPaneIdAction,
             WriteToPaneIdAction,
         };
@@ -1572,6 +1573,9 @@ impl From<crate::input::actions::Action>
             }),
             crate::input::actions::Action::WriteChars { chars } => {
                 ActionType::WriteChars(WriteCharsAction { chars })
+            },
+            crate::input::actions::Action::WriteCommandOutput(filename) => {
+                ActionType::WriteCommandOutput(WriteCommandOutputAction { filename })
             },
             crate::input::actions::Action::WriteToPaneId { bytes, pane_id } => {
                 ActionType::WriteToPaneId(WriteToPaneIdAction {
@@ -2644,6 +2648,11 @@ impl TryFrom<crate::client_server_contract::client_server_contract::Action>
                         .ok_or_else(|| anyhow!("WriteCharsToPaneId missing pane_id"))?
                         .try_into()?,
                 })
+            },
+            ActionType::WriteCommandOutput(write_command_output_action) => {
+                Ok(crate::input::actions::Action::WriteCommandOutput(
+                    write_command_output_action.filename,
+                ))
             },
             ActionType::Paste(paste_action) => Ok(crate::input::actions::Action::Paste {
                 chars: paste_action.chars,

@@ -307,7 +307,7 @@ pub struct OverrideLayoutPayload {
 pub struct Action {
     #[prost(enumeration="ActionName", tag="1")]
     pub name: i32,
-    #[prost(oneof="action::OptionalPayload", tags="2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69")]
+    #[prost(oneof="action::OptionalPayload", tags="2, 3, 4, 100, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69")]
     pub optional_payload: ::core::option::Option<action::OptionalPayload>,
 }
 /// Nested message and enum types in `Action`.
@@ -321,6 +321,8 @@ pub mod action {
         WritePayload(super::WritePayload),
         #[prost(message, tag="4")]
         WriteCharsPayload(super::WriteCharsPayload),
+        #[prost(message, tag="100")]
+        WriteCommandOutputPayload(super::WriteCommandOutputPayload),
         #[prost(message, tag="5")]
         SwitchModeForAllClientsPayload(super::SwitchToModePayload),
         #[prost(message, tag="6")]
@@ -696,6 +698,12 @@ pub struct WritePayload {
 pub struct WriteCharsPayload {
     #[prost(string, tag="1")]
     pub chars: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct WriteCommandOutputPayload {
+    #[prost(string, tag="1")]
+    pub filename: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1255,6 +1263,7 @@ pub enum ActionName {
     MarkPaneSeen = 143,
     MarkAllSeen = 144,
     ToggleTrayIcon = 145,
+    WriteCommandOutput = 146,
 }
 impl ActionName {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1406,6 +1415,7 @@ impl ActionName {
             ActionName::MarkPaneSeen => "MarkPaneSeen",
             ActionName::MarkAllSeen => "MarkAllSeen",
             ActionName::ToggleTrayIcon => "ToggleTrayIcon",
+            ActionName::WriteCommandOutput => "WriteCommandOutput",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1554,6 +1564,7 @@ impl ActionName {
             "MarkPaneSeen" => Some(Self::MarkPaneSeen),
             "MarkAllSeen" => Some(Self::MarkAllSeen),
             "ToggleTrayIcon" => Some(Self::ToggleTrayIcon),
+            "WriteCommandOutput" => Some(Self::WriteCommandOutput),
             _ => None,
         }
     }

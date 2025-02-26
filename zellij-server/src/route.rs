@@ -443,6 +443,35 @@ fn route_action_with_origin(
                 ))
                 .with_context(err_context)?;
         },
+        Action::WriteCommandOutput(filename) => {
+            let context = err_context();
+            let mut completion_tx = Some(completion_tx);
+            let senders = senders.clone();
+            thread::spawn(move || {
+                let err_context = || format!("{}: failed to run command", context);
+                let mut cmd_with_args = filename.split(' ').map(String::from);
+                if let Some(cmd) = cmd_with_args.next() {
+                    let args: Vec<String> = cmd_with_args.collect();
+                    match std::process::Command::new(cmd).args(args).output() {
+                        Ok(output) => {
+                            let _ = senders.send_to_screen(ScreenInstruction::ClearScroll(client_id));
+                            let _ = senders.send_to_screen(ScreenInstruction::WriteCharacter(
+                                None,
+                                output.stdout,
+                                false,
+                                client_id,
+                                completion_tx.take().map(|tx| NotificationEnd::new(tx)),
+                            ));
+                        },
+                        Err(e) => {
+                            log::error!("{}: {}", err_context(), e);
+                        },
+                    }
+                } else {
+                    log::error!("{}: empty command", err_context());
+                }
+            });
+        },
         Action::WriteToPaneId { bytes, pane_id } => {
             senders
                 .send_to_screen(ScreenInstruction::ClearScroll(client_id))

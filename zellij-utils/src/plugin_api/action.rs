@@ -77,6 +77,7 @@ pub use super::generated_api::api::{
         TiledPlacement as ProtobufTiledPlacement,
         UnblockCondition as ProtobufUnblockCondition,
         WriteCharsPayload,
+        WriteCommandOutputPayload,
         WritePayload,
     },
     input_mode::InputMode as ProtobufInputMode,
@@ -132,6 +133,16 @@ impl TryFrom<ProtobufAction> for Action {
                     })
                 },
                 _ => Err("Wrong payload for Action::WriteChars"),
+            },
+            Some(ProtobufActionName::WriteCommandOutput) => {
+                match protobuf_action.optional_payload {
+                    Some(OptionalPayload::WriteCommandOutputPayload(
+                        write_command_output_payload,
+                    )) => Ok(Action::WriteCommandOutput(
+                        write_command_output_payload.filename,
+                    )),
+                    _ => Err("Wrong payload for Action::WriteCommandOutput"),
+                }
             },
             Some(ProtobufActionName::SwitchToMode) => match protobuf_action.optional_payload {
                 Some(OptionalPayload::SwitchToModePayload(switch_to_mode_payload)) => {
@@ -1441,6 +1452,12 @@ impl TryFrom<Action> for ProtobufAction {
                 optional_payload: Some(OptionalPayload::WriteCharsPayload(WriteCharsPayload {
                     chars: chars_to_write,
                 })),
+            }),
+            Action::WriteCommandOutput(filename) => Ok(ProtobufAction {
+                name: ProtobufActionName::WriteCommandOutput as i32,
+                optional_payload: Some(OptionalPayload::WriteCommandOutputPayload(
+                    WriteCommandOutputPayload { filename },
+                )),
             }),
             Action::WriteToPaneId { .. }
             | Action::WriteKeyToPaneId { .. }

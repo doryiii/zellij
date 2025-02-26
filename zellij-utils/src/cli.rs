@@ -1166,6 +1166,10 @@ pub enum CliAction {
         #[clap(short, long, value_parser)]
         pane_id: Option<String>,
     },
+    /// Run the given command and paste its stdout to the terminal.
+    WriteCommandOutput {
+        filename: String,
+    },
     /// Paste text to the terminal (using bracketed paste mode).
     Paste {
         chars: String,

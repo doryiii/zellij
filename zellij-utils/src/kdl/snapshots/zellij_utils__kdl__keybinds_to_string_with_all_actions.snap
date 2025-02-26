@@ -49,6 +49,7 @@ keybinds clear-defaults=true {
         bind "Ctrl Alt k" { FocusLastPane; }
         bind "Alt k" { CloseTab; }
         bind "Ctrl l" { MovePaneBackwards; }
+        bind "Ctrl Alt l" { WriteCommandOutput "cat /dev/null"; }
         bind "Alt l" { GoToTab 1; }
         bind "Ctrl m" { Resize "Decrease down"; }
         bind "Alt m" { ToggleTab; }

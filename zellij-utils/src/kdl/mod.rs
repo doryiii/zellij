@@ -513,6 +513,7 @@ impl Action {
     ) -> Result<Self, ConfigError> {
         match action_name {
             "WriteChars" => Ok(Action::WriteChars { chars: string }),
+            "WriteCommandOutput" => Ok(Action::WriteCommandOutput(string)),
             "ApplyTiledSwapLayout" => Ok(Action::ApplyTiledSwapLayout { name: string }),
             "ApplyFloatingSwapLayout" => Ok(Action::ApplyFloatingSwapLayout { name: string }),
             "SetPaneFrameStyle" => {
@@ -700,6 +701,11 @@ impl Action {
             },
             Action::WriteChars { chars: string } => {
                 let mut node = KdlNode::new("WriteChars");
+                node.push(string.clone());
+                Some(node)
+            },
+            Action::WriteCommandOutput(string) => {
+                let mut node = KdlNode::new("WriteCommandOutput");
                 node.push(string.clone());
                 Some(node)
             },
@@ -2011,6 +2017,11 @@ impl TryFrom<(&KdlNode, &Options)> for Action {
             "Deny" => parse_kdl_action_arguments!(action_name, action_arguments, kdl_action),
             "Write" => parse_kdl_action_u8_arguments!(action_name, action_arguments, kdl_action),
             "WriteChars" => parse_kdl_action_char_or_string_arguments!(
+                action_name,
+                action_arguments,
+                kdl_action
+            ),
+            "WriteCommandOutput" => parse_kdl_action_char_or_string_arguments!(
                 action_name,
                 action_arguments,
                 kdl_action
@@ -9204,6 +9215,7 @@ fn keybinds_to_string_with_all_actions() {
                     };
                 }
                 bind "Ctrl Alt k" { FocusLastPane; }
+                bind "Ctrl Alt l" { WriteCommandOutput "cat /dev/null"; }
             }
         }"#;
     let document: KdlDocument = fake_config.parse().unwrap();

@@ -346,6 +346,7 @@ message Action {
     MarkAllSeenAction mark_all_seen = 180;
     WriteKeyToPaneIdAction write_key_to_pane_id = 181;
     ToggleTrayIconAction toggle_tray_icon = 182;
+    WriteCommandOutputAction write_command_output = 183;
   }
 }
 
@@ -479,6 +480,10 @@ message WriteToPaneIdAction {
 message WriteCharsToPaneIdAction {
   PaneId pane_id = 1;
   string chars = 2;
+}
+
+message WriteCommandOutputAction {
+  string filename = 1;
 }
 
 message PasteAction {

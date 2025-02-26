@@ -196,6 +196,7 @@ message Action {
     SwitchToModePayload switch_to_mode_payload = 2;
     WritePayload write_payload = 3;
     WriteCharsPayload write_chars_payload = 4;
+    WriteCommandOutputPayload write_command_output_payload = 100;
     SwitchToModePayload switch_mode_for_all_clients_payload = 5;
     resize.Resize resize_payload = 6;
     resize.ResizeDirection move_focus_payload = 7;
@@ -430,6 +431,10 @@ message WriteCharsPayload {
   string chars = 1;
 }
 
+message WriteCommandOutputPayload {
+  string filename = 1;
+}
+
 message DumpScreenPayload {
   string file_path = 1;
   bool include_scrollback = 2;
@@ -582,6 +587,7 @@ enum ActionName {
     MarkPaneSeen = 143;
     MarkAllSeen = 144;
     ToggleTrayIcon = 145;
+    WriteCommandOutput = 146;
 }
 
 message Position {
