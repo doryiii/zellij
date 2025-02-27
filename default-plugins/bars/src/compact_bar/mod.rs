@@ -1513,17 +1513,16 @@ mod tests {
         assert_eq!(total, 40);
         assert_eq!(total, rendered_width(&parts));
         let joined: String = parts.iter().map(|part| strip_ansi(&part.part)).collect();
-        assert!(joined.contains("+3"));
+        assert!(joined.contains("+4"));
         let (regions, _) = compact_regions(&parts, &rendered, active, None, None);
-        assert!(regions.contains(&(8, 16, CompactRegion::Tab(0))));
-        assert!(regions.contains(&(16, 24, CompactRegion::Tab(1))));
-        assert!(regions.contains(&(24, 32, CompactRegion::Tab(2))));
+        assert!(regions.contains(&(8, 17, CompactRegion::Tab(0))));
+        assert!(regions.contains(&(17, 26, CompactRegion::Tab(1))));
         assert!(regions.contains(&(
-            32,
-            38,
+            26,
+            33,
             CompactRegion::Marker {
                 left: false,
-                position: 3
+                position: 2
             }
         )));
     }

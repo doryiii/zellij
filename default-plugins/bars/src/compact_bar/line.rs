@@ -273,8 +273,10 @@ impl TabLinePopulator {
     }
 
     fn create_styled_indicator(&self, text: String, tab_index: usize) -> LinePart {
-        let separator = tab_separator(self.capabilities);
-        let text_len = display_width(&text) + 2 * display_width(separator);
+        let left_separator = left_tab_separator(self.capabilities);
+        let right_separator = right_tab_separator(self.capabilities);
+        let text_len =
+            display_width(&text) + display_width(left_separator) + display_width(right_separator);
 
         let colors = IndicatorColors {
             text: self.palette.ribbon_unselected.base,
@@ -289,9 +291,9 @@ impl TabLinePopulator {
         };
 
         let styled_parts = [
-            style!(colors.separator, colors.background).paint(separator),
+            style!(colors.separator, colors.background).paint(left_separator),
             text_style.paint(text),
-            style!(colors.background, colors.separator).paint(separator),
+            style!(colors.background, colors.separator).paint(right_separator),
         ];
 
         LinePart {
@@ -841,7 +843,15 @@ impl TabLineBuilder {
     }
 }
 
-pub fn tab_separator(capabilities: PluginCapabilities) -> &'static str {
+pub fn left_tab_separator(capabilities: PluginCapabilities) -> &'static str {
+    if !capabilities.arrow_fonts {
+        ARROW_SEPARATOR
+    } else {
+        " "
+    }
+}
+
+pub fn right_tab_separator(capabilities: PluginCapabilities) -> &'static str {
     if !capabilities.arrow_fonts {
         ARROW_SEPARATOR
     } else {

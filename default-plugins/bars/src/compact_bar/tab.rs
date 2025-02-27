@@ -1,4 +1,7 @@
-use crate::compact_bar::{line::tab_separator, LinePart};
+use crate::compact_bar::{
+    line::{left_tab_separator, right_tab_separator},
+    LinePart,
+};
 use ansi_term::{ANSIString, ANSIStrings};
 use zellij_tile::graphemes;
 use zellij_tile::prelude::*;
@@ -35,13 +38,13 @@ pub fn render_tab(
     is_hovered: bool,
     is_dragged: bool,
     palette: Styling,
-    separator: &str,
+    right_separator_char: &str,
+    left_separator_char: &str,
     dimmed: bool,
     max_width: usize,
     marker: Option<crate::tab_marker::TabMarker>,
 ) -> LinePart {
     let focused_clients = tab.other_focused_client_slots.as_slice();
-    let separator_width = graphemes::display_width(separator);
     let alternate_tab_color = if is_alternate_tab {
         palette.ribbon_unselected.emphasis_1
     } else {
@@ -83,7 +86,7 @@ pub fn render_tab(
     } else {
         text_style
     };
-    let left_separator = style!(separator_fill_color, background_color).paint(separator);
+    let left_separator = style!(separator_fill_color, background_color).paint(left_separator_char);
     let cursor_info = if focused_clients.is_empty() {
         None
     } else {
@@ -94,7 +97,11 @@ pub fn render_tab(
         .map(|(_, extra_length)| *extra_length)
         .unwrap_or(0);
     let marker_len = marker.as_ref().map(|marker| marker.width()).unwrap_or(0);
-    let decoration_len = (separator_width * 2) + 2 + cursor_len + marker_len;
+    let decoration_len = graphemes::display_width(left_separator_char)
+        + graphemes::display_width(right_separator_char)
+        + 2
+        + cursor_len
+        + marker_len;
     let text = fit_tab_text(text, max_width.saturating_sub(decoration_len));
     let tab_text_len = graphemes::display_width(&text) + decoration_len;
 
@@ -111,7 +118,7 @@ pub fn render_tab(
     };
     let tab_styled_text = format!("{}{}", text_style.paint(format!(" {} ", text)), marker_part);
 
-    let right_separator = style!(background_color, separator_fill_color).paint(separator);
+    let right_separator = style!(background_color, separator_fill_color).paint(right_separator_char);
     let tab_styled_text = if let Some((cursor_section, _)) = cursor_info {
         let mut s = String::new();
         let cursor_beginning = text_style.paint("[").to_string();
@@ -146,7 +153,8 @@ pub fn tab_style(
     dimmed: bool,
     max_width: usize,
 ) -> LinePart {
-    let separator = tab_separator(capabilities);
+    let left_separator = left_tab_separator(capabilities);
+    let right_separator = right_tab_separator(capabilities);
 
     if tab.is_fullscreen_active {
         tabname.push_str(" (FULLSCREEN)");
@@ -165,7 +173,8 @@ pub fn tab_style(
         is_hovered,
         is_dragged,
         palette,
-        separator,
+        left_separator,
+        right_separator,
         dimmed,
         max_width,
         marker,
