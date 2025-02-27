@@ -32,7 +32,8 @@ fn populate_tabs_in_tab_line(
         let collapsed_left = left_more_message(
             left_count,
             palette,
-            tab_separator(capabilities),
+            left_tab_separator(capabilities),
+            right_tab_separator(capabilities),
             left_more_tab_index,
         );
         // right_more_tab_index is the tab to the right of the rightmost visible tab
@@ -40,7 +41,8 @@ fn populate_tabs_in_tab_line(
         let collapsed_right = right_more_message(
             right_count,
             palette,
-            tab_separator(capabilities),
+            left_tab_separator(capabilities),
+            right_tab_separator(capabilities),
             right_more_tab_index,
         );
 
@@ -108,7 +110,8 @@ fn populate_tabs_in_tab_line(
 fn left_more_message(
     tab_count_to_the_left: usize,
     palette: Styling,
-    separator: &str,
+    left_separator_char: &str,
+    right_separator_char: &str,
     tab_index: usize,
 ) -> LinePart {
     if tab_count_to_the_left == 0 {
@@ -121,15 +124,15 @@ fn left_more_message(
     };
     // 238
     // chars length plus separator length on both sides
-    let more_text_len = more_text.width() + 2 * separator.width();
+    let more_text_len = more_text.width() + left_separator_char.width() + right_separator_char.width();
     let (text_color, sep_color) = (
         palette.ribbon_unselected.base,
         palette.text_unselected.background,
     );
     let plus_ribbon_bg = palette.text_selected.emphasis_0;
-    let left_separator = style!(sep_color, plus_ribbon_bg).paint(separator);
+    let left_separator = style!(sep_color, plus_ribbon_bg).paint(left_separator_char);
     let more_styled_text = style!(text_color, plus_ribbon_bg).bold().paint(more_text);
-    let right_separator = style!(plus_ribbon_bg, sep_color).paint(separator);
+    let right_separator = style!(plus_ribbon_bg, sep_color).paint(right_separator_char);
     let more_styled_text =
         ANSIStrings(&[left_separator, more_styled_text, right_separator]).to_string();
     LinePart {
@@ -142,7 +145,8 @@ fn left_more_message(
 fn right_more_message(
     tab_count_to_the_right: usize,
     palette: Styling,
-    separator: &str,
+    left_separator_char: &str,
+    right_separator_char: &str,
     tab_index: usize,
 ) -> LinePart {
     if tab_count_to_the_right == 0 {
@@ -154,16 +158,16 @@ fn right_more_message(
         " +many → ".to_string()
     };
     // chars length plus separator length on both sides
-    let more_text_len = more_text.width() + 2 * separator.width();
+    let more_text_len = more_text.width() + left_separator_char.width() + right_separator_char.width();
 
     let (text_color, sep_color) = (
         palette.ribbon_unselected.base,
         palette.text_unselected.background,
     );
     let plus_ribbon_bg = palette.text_selected.emphasis_0;
-    let left_separator = style!(sep_color, plus_ribbon_bg).paint(separator);
+    let left_separator = style!(sep_color, plus_ribbon_bg).paint(left_separator_char);
     let more_styled_text = style!(text_color, plus_ribbon_bg).bold().paint(more_text);
-    let right_separator = style!(plus_ribbon_bg, sep_color).paint(separator);
+    let right_separator = style!(plus_ribbon_bg, sep_color).paint(right_separator_char);
     let more_styled_text =
         ANSIStrings(&[left_separator, more_styled_text, right_separator]).to_string();
     LinePart {
@@ -232,7 +236,15 @@ fn tab_line_prefix(
     parts
 }
 
-pub fn tab_separator(capabilities: PluginCapabilities) -> &'static str {
+pub fn left_tab_separator(capabilities: PluginCapabilities) -> &'static str {
+    if !capabilities.arrow_fonts {
+        ARROW_SEPARATOR
+    } else {
+        " "
+    }
+}
+
+pub fn right_tab_separator(capabilities: PluginCapabilities) -> &'static str {
     if !capabilities.arrow_fonts {
         ARROW_SEPARATOR
     } else {
@@ -292,7 +304,8 @@ pub fn tab_line(
             is_swap_layout_dirty,
             mode,
             &palette,
-            tab_separator(capabilities),
+            left_tab_separator(capabilities),
+            right_tab_separator(capabilities),
         ) {
             remaining_space -= swap_layout_status.len;
             let mut buffer = String::new();
@@ -317,7 +330,8 @@ fn swap_layout_status(
     is_swap_layout_damaged: bool,
     input_mode: InputMode,
     palette: &Styling,
-    separator: &str,
+    left_separator: &str,
+    right_separator: &str,
 ) -> Option<LinePart> {
     match swap_layout_name {
         Some(swap_layout_name) => {
@@ -331,21 +345,21 @@ fn swap_layout_status(
             let (prefix_separator, swap_layout_name, suffix_separator) =
                 if input_mode == InputMode::Locked {
                     (
-                        style!(bg, fg).paint(separator),
+                        style!(bg, fg).paint(left_separator),
                         style!(bg, fg).italic().paint(&swap_layout_name),
-                        style!(fg, bg).paint(separator),
+                        style!(fg, bg).paint(right_separator),
                     )
                 } else if is_swap_layout_damaged {
                     (
-                        style!(bg, fg).paint(separator),
+                        style!(bg, fg).paint(left_separator),
                         style!(bg, fg).bold().paint(&swap_layout_name),
-                        style!(fg, bg).paint(separator),
+                        style!(fg, bg).paint(right_separator),
                     )
                 } else {
                     (
-                        style!(bg, green).paint(separator),
+                        style!(bg, green).paint(left_separator),
                         style!(bg, green).bold().paint(&swap_layout_name),
-                        style!(green, bg).paint(separator),
+                        style!(green, bg).paint(right_separator),
                     )
                 };
             let swap_layout_indicator = format!(
